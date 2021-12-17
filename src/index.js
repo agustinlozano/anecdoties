@@ -1,35 +1,43 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
-const Paragraph = ({ content }) => 
+const Paragraph = ({ content }) =>
   <p>{content}</p>
 
 const Button = ({ handler, content }) =>
   <button onClick={handler}>{content}</button>
 
+const H2 = ({ content }) =>
+  <h2>{content}</h2>
+
 const App = ({ anecdotes }) => {
   const [selectedAnecdote, setSelected] = useState(0);
   const [votes, setVote] = useState(Array(6).fill(0));
   const nextAnecdote = generateNext(selectedAnecdote);
-  
+  const mostVoted = getMax(votes); 
   const addVote = () => {
     const newVotes = votes;
-
-    newVotes[selectedAnecdote] += 1;    
+    newVotes[selectedAnecdote] += 1;
     setVote(newVotes);
   }
 
   return (
     <div>
+      <H2 content='Anecdote of the day' />
       <Paragraph content={anecdotes[selectedAnecdote]} />
       <Paragraph content={`has ${votes[selectedAnecdote]} votes`} />
-      <Button 
-        handler={addVote} 
+      
+      <Button
+        handler={addVote}
         content='Vote'
       />
-      <Button handler={() => setSelected(nextAnecdote)} 
+      <Button handler={() => setSelected(nextAnecdote)}
         content='Next anecdote'
       />
+
+      <H2 content='Anecdote with most votes' />
+      <Paragraph content={anecdotes[mostVoted]} />
+      <Paragraph content={`reached ${votes[mostVoted]} votes`} />
     </div>
   );
 }
@@ -55,9 +63,17 @@ function generateRandomInt(max, min) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function getMax(arr) {
+  let max;
+  const m = Math.max.apply(null, arr);
+  max = arr.indexOf(m);
+  console.log('index', max);
+  return max;
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <App anecdotes={anecdotes} />
-  </React.StrictMode>, 
+  </React.StrictMode>,
   document.getElementById('root')
 );
