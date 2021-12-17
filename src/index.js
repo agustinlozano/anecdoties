@@ -1,22 +1,37 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
-const Anecdote = ({ content }) => 
+const Paragraph = ({ content }) => 
   <p>{content}</p>
 
-const Button = ({ handler }) =>
-  <button onClick={handler}>Next anecdote</button>
+const Button = ({ handler, content }) =>
+  <button onClick={handler}>{content}</button>
 
 const App = ({ anecdotes }) => {
-  const [selected, setSelected] = useState(0);
-  const nextAnecdote = generateNext(selected);
+  const [selectedAnecdote, setSelected] = useState(0);
+  const [votes, setVote] = useState(Array(6).fill(0));
+  const nextAnecdote = generateNext(selectedAnecdote);
+  
+  const addVote = () => {
+    const newVotes = votes;
+
+    newVotes[selectedAnecdote] += 1;    
+    setVote(newVotes);
+  }
 
   return (
     <div>
-      <Anecdote content={anecdotes[selected]} />
-      <Button handler={() => setSelected(nextAnecdote)} />
+      <Paragraph content={anecdotes[selectedAnecdote]} />
+      <Paragraph content={`has ${votes[selectedAnecdote]} votes`} />
+      <Button 
+        handler={addVote} 
+        content='Vote'
+      />
+      <Button handler={() => setSelected(nextAnecdote)} 
+        content='Next anecdote'
+      />
     </div>
-  )
+  );
 }
 
 const anecdotes = [
@@ -40,6 +55,9 @@ function generateRandomInt(max, min) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-ReactDOM.render(<App anecdotes={anecdotes} />, 
+ReactDOM.render(
+  <React.StrictMode>
+    <App anecdotes={anecdotes} />
+  </React.StrictMode>, 
   document.getElementById('root')
 );
